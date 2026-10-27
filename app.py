@@ -649,31 +649,7 @@ input:focus {
 
 <main>
 
-    <section class="stats">
-        <div class="stat">
-            <div class="stat-icon">↗</div>
-            <div>
-                <strong>Easy Submission</strong>
-                <span>Submit your complete project</span>
-            </div>
-        </div>
-
-        <div class="stat">
-            <div class="stat-icon">▣</div>
-            <div>
-                <strong>Organised Files</strong>
-                <span>Keep folders and files together</span>
-            </div>
-        </div>
-
-        <div class="stat">
-            <div class="stat-icon">✓</div>
-            <div>
-                <strong>Ready for Review</strong>
-                <span>Keep your details accurate</span>
-            </div>
-        </div>
-    </section>
+   
 
     <div class="content-grid">
 
