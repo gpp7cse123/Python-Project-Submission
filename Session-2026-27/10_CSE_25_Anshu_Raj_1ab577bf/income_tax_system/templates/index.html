@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Income Tax Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <h1>Income Tax Calculator</h1>
+    <p>Compare the old and new tax regimes for FY 2026-27 and see which one leaves more money with you.</p>
+  </div>
+</header>
+
+<main class="wrap layout">
+
+  <!-- ============ INPUT FORM ============ -->
+  <form class="panel form" method="post" action="/" novalidate>
+
+    <fieldset>
+      <legend>Your income (per year)</legend>
+
+      <label class="field">
+        <span>Income type</span>
+        <select name="income_type">
+          <option value="salaried" {{ 'selected' if form.get('income_type','salaried')=='salaried' }}>Salaried</option>
+          <option value="business" {{ 'selected' if form.get('income_type')=='business' }}>Business / Self-employed</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Salary or business income</span>
+        <div class="money"><i>₹</i><input type="text" inputmode="numeric" name="income" value="{{ form.get('income','') }}" placeholder="e.g. 1200000" autofocus></div>
+      </label>
+
+      <label class="field">
+        <span>Other income (interest, rent)</span>
+        <div class="money"><i>₹</i><input type="text" inputmode="numeric" name="other_income" value="{{ form.get('other_income','') }}" placeholder="0"></div>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Deductions (old regime only)</legend>
+
+      <label class="field">
+        <span>Section 80C <small>max {{ caps.sec_80c|inr }}</small></span>
+        <div class="money"><i>₹</i><input type="text" inputmode="numeric" name="sec_80c" value="{{ form.get('sec_80c','') }}" placeholder="PPF, ELSS, LIC"></div>
+      </label>
+
+      <label class="field">
+        <span>Health insurance, 80D <small>max {{ caps.sec_80d|inr }}</small></span>
+        <div class="money"><i>₹</i><input type="text" inputmode="numeric" name="sec_80d" value="{{ form.get('sec_80d','') }}" placeholder="0"></div>
+      </label>
+
+      <label class="field">
+        <span>NPS, 80CCD(1B) <small>max {{ caps.sec_nps|inr }}</small></span>
+        <div class="money"><i>₹</i><input type="text" inputmode="numeric" name="sec_nps" value="{{ form.get('sec_nps','') }}" placeholder="0"></div>
+      </label>
+
+      <label class="field">
+        <span>Home loan interest <small>max {{ caps.home_loan|inr }}</small></span>
+        <div class="money"><i>₹</i><input type="text" inputmode="numeric" name="home_loan" value="{{ form.get('home_loan','') }}" placeholder="0"></div>
+      </label>
+
+      <label class="field">
+        <span>HRA exemption</span>
+        <div class="money"><i>₹</i><input type="text" inputmode="numeric" name="hra" value="{{ form.get('hra','') }}" placeholder="0"></div>
+      </label>
+    </fieldset>
+
+    {% if errors %}
+    <div class="errors" role="alert">
+      {% for e in errors %}<p>{{ e }}</p>{% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="actions">
+      <button type="submit" class="btn">Calculate tax</button>
+      <a class="btn-link" href="/">Clear form</a>
+    </div>
+  </form>
+
+  <!-- ============ RESULTS ============ -->
+  <section class="results" aria-live="polite">
+
+  {% if result %}
+
+    <div class="verdict {{ result.better }}">
+      {% if result.better == 'same' %}
+        <h2>Both regimes give the same tax.</h2>
+      {% else %}
+        <h2>The {{ result.better }} regime is better for you.</h2>
+        <p>You save <strong>{{ result.saving|inr }}</strong> a year compared with the {{ 'old' if result.better == 'new' else 'new' }} regime.</p>
+      {% endif %}
+    </div>
+
+    <div class="compare">
+      {% for r in [result.new, result.old] %}
+      {% set key = 'new' if r.name == 'New regime' else 'old' %}
+      <article class="panel regime {{ 'best' if result.better == key }}">
+        <h3>{{ r.name }}{% if result.better == key %}<span class="badge">Best</span>{% endif %}</h3>
+
+        <p class="label">Total tax</p>
+        <p class="big">{{ r.total_tax|inr }}</p>
+
+        <div class="bar" role="img" aria-label="{{ r.tax_pct }}% of income goes to tax">
+          <span class="bar-tax"  style="--w: {{ r.tax_pct }}%"></span>
+          <span class="bar-home" style="--w: {{ r.home_pct }}%"></span>
+        </div>
+        <p class="legend"><b class="dot tax"></b>Tax {{ '%.1f'|format(r.effective_rate) }}%
+           <b class="dot home"></b>Take-home {{ '%.1f'|format(100 - r.effective_rate) }}%</p>
+
+        <dl class="figures">
+          <dt>Gross income</dt>        <dd>{{ r.gross|inr }}</dd>
+          <dt>Total deductions</dt>    <dd>- {{ r.deductions|inr }}</dd>
+          <dt>Taxable income</dt>      <dd>{{ r.taxable|inr }}</dd>
+          <dt>Tax on slabs</dt>        <dd>{{ r.slab_tax|inr }}</dd>
+          <dt>Rebate 87A</dt>          <dd>- {{ r.rebate|inr }}</dd>
+          <dt>Cess ({{ cess }}%)</dt>  <dd>{{ r.cess|inr }}</dd>
+          <dt class="total">Take-home per month</dt><dd class="total">{{ r.monthly|inr }}</dd>
+        </dl>
+
+        {% for n in r.notes %}<p class="note">{{ n }}</p>{% endfor %}
+
+        <details>
+          <summary>Slab-wise breakdown</summary>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Income slab</th><th>Rate</th><th>Tax</th></tr></thead>
+              <tbody>
+              {% for row in r.rows %}
+                <tr><td>{{ row.range }}</td><td>{{ row.rate }}%</td><td>{{ row.tax|inr }}</td></tr>
+              {% else %}
+                <tr><td colspan="3">No taxable income.</td></tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </article>
+      {% endfor %}
+    </div>
+
+    <p class="disclaimer">Surcharge (income above ₹50 lakh) and senior-citizen slabs are not included. This is a learning project, so confirm final figures on the Income Tax Department website.</p>
+
+  {% else %}
+    <div class="panel empty">
+      <h2>See your tax in seconds</h2>
+      <p>Enter your yearly income on the left and press <b>Calculate tax</b>. You will get the old and new regime side by side, with a clear winner.</p>
+      <p>Tip: leave the deduction boxes empty if you don't invest in any tax-saving options. The new regime usually wins in that case.</p>
+    </div>
+  {% endif %}
+
+  </section>
+</main>
+
+<footer class="wrap foot">Micro-project: Python Programming, Diploma Year 2</footer>
+</body>
+</html>
