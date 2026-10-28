@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radix Converter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+/* Layout: slim masthead, a 2x2 field of four live inputs, then a bit-lamp register, place-value sum, and a 0-15 reference table. */
+:root {
+  --bg: #eceff6;
+  --surface: #fbfbfe;
+  --surface-2: #f1f3fa;
+  --ink: #12152b;
+  --muted: #566080;
+  --line: #d3d8e8;
+  --accent: #3538e8;
+  --on-accent: #ffffff;
+  --bin: #3538e8;
+  --oct: #0b8a74;
+  --dec: #cc5218;
+  --hex: #a9217a;
+  --danger: #c4261d;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d0f1f;
+    --surface: #161930;
+    --surface-2: #1d2140;
+    --ink: #eceefb;
+    --muted: #9aa2c8;
+    --line: #2b3157;
+    --accent: #8f94ff;
+    --on-accent: #0d0f1f;
+    --bin: #8f94ff;
+    --oct: #3fd0b4;
+    --dec: #ff9b63;
+    --hex: #f07cc4;
+    --danger: #ff7a70;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d0f1f;
+  --surface: #161930;
+  --surface-2: #1d2140;
+  --ink: #eceefb;
+  --muted: #9aa2c8;
+  --line: #2b3157;
+  --accent: #8f94ff;
+  --on-accent: #0d0f1f;
+  --bin: #8f94ff;
+  --oct: #3fd0b4;
+  --dec: #ff9b63;
+  --hex: #f07cc4;
+  --danger: #ff7a70;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+h1, h2 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: -0.02em; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* Masthead */
+.mast { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 32px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+h1 { font-size: clamp(2.2rem, 6vw, 3.9rem); line-height: 1; font-weight: 800; }
+h1 .b2 { color: var(--bin); } h1 .b8 { color: var(--oct); } h1 .b10 { color: var(--dec); } h1 .b16 { color: var(--hex); }
+.lede { max-width: 34ch; margin: 0; color: var(--muted); font-size: 1rem; }
+
+/* Fields */
+.fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.field { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 18px 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; --c: var(--accent); }
+.field[data-base="bin"] { --c: var(--bin); } .field[data-base="oct"] { --c: var(--oct); }
+.field[data-base="dec"] { --c: var(--dec); } .field[data-base="hex"] { --c: var(--hex); }
+.field:focus-within { border-color: var(--c); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 22%, transparent); }
+.field.bad { border-color: var(--danger); }
+.field-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.field-head label { display: flex; align-items: baseline; gap: 10px; font-weight: 600; cursor: pointer; }
+.base-num { font-family: var(--font-display); font-weight: 800; font-size: 2rem; line-height: 1; color: var(--c); letter-spacing: -0.03em; }
+.base-name { font-size: 0.95rem; }
+.prefix { font-family: var(--font-mono); font-size: 12px; color: var(--muted); background: var(--surface-2); padding: 2px 8px; border-radius: 6px; }
+.input-row { display: flex; gap: 8px; align-items: stretch; }
+.input-row input {
+  flex: 1; min-width: 0; font-family: var(--font-mono); font-size: 1.35rem; font-weight: 500; color: var(--ink);
+  background: var(--surface-2); border: 1px solid transparent; border-radius: 10px; padding: 12px 14px; letter-spacing: 0.02em;
+}
+.input-row input:focus { outline: none; border-color: var(--c); }
+.input-row input::placeholder { color: var(--muted); opacity: 0.6; }
+.copy { font-family: var(--font-body); font-size: 13px; font-weight: 600; min-width: 64px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 10px; cursor: pointer; padding: 0 12px; }
+.copy:hover { border-color: var(--c); color: var(--c); }
+.hint { font-size: 12.5px; color: var(--muted); min-height: 1.4em; margin: 0; }
+.field.bad .hint { color: var(--danger); font-weight: 500; }
+
+/* Panels */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.panel-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
+.panel h2 { font-size: 1.35rem; font-weight: 700; }
+.sub { margin: 4px 0 0; color: var(--muted); font-size: 14px; max-width: 60ch; }
+.seg { display: inline-flex; background: var(--surface-2); border-radius: 10px; padding: 3px; gap: 2px; }
+.seg button { font-family: var(--font-mono); font-size: 13px; font-weight: 500; border: 0; background: transparent; color: var(--muted); padding: 6px 12px; border-radius: 8px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
+
+.register { display: flex; flex-wrap: wrap; gap: 14px 18px; }
+.nibble { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.bits { display: flex; gap: 4px; }
+.bit {
+  width: 38px; height: 44px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface-2); color: var(--muted);
+  font-family: var(--font-mono); font-weight: 700; font-size: 1.1rem; cursor: pointer; padding: 0;
+}
+.bit:hover { border-color: var(--bin); }
+.bit[aria-pressed="true"] { background: var(--bin); border-color: var(--bin); color: var(--on-accent); }
+.nib-hex { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--hex); }
+.reg-meta { display: flex; flex-wrap: wrap; gap: 8px 22px; font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+.reg-meta b { color: var(--ink); font-weight: 700; }
+.note { font-size: 14px; color: var(--muted); margin: 0; }
+
+.sum { font-family: var(--font-mono); font-size: 1.05rem; line-height: 1.7; overflow-wrap: anywhere; margin: 0; }
+.sum .eq { color: var(--dec); font-weight: 700; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-family: var(--font-mono); font-size: 12.5px; padding: 4px 9px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); color: var(--ink); }
+.chip i { font-style: normal; color: var(--muted); }
+
+.samples { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.samples span { font-size: 13px; color: var(--muted); margin-right: 4px; }
+.sample { font-family: var(--font-mono); font-size: 13px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+.sample:hover { border-color: var(--accent); color: var(--accent); }
+
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; font-family: var(--font-mono); font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { padding: 8px 14px; text-align: right; white-space: nowrap; }
+th { font-family: var(--font-body); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--surface-2); }
+tbody tr + tr td { border-top: 1px solid var(--line); }
+td:nth-child(1) { color: var(--dec); } td:nth-child(2) { color: var(--bin); } td:nth-child(3) { color: var(--oct); } td:nth-child(4) { color: var(--hex); font-weight: 700; }
+tr.hit td { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+
+footer { color: var(--muted); font-size: 13px; }
+
+@media (max-width: 720px) {
+  .fields { grid-template-columns: minmax(0, 1fr); }
+  .bit { width: 34px; height: 42px; }
+  .panel { padding: 18px 16px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .field, .bit, .copy, .sample { transition: border-color .15s, box-shadow .15s, background .15s, color .15s; }
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div>
+      <p class="eyebrow">Positional notation, four ways</p>
+      <h1>Radix <span class="b2">2</span> <span class="b8">8</span> <span class="b10">10</span> <span class="b16">16</span></h1>
+    </div>
+    <p class="lede">Type in any box. The other three update as you type. Flip the bits below to build a number by hand.</p>
+  </header>
+
+  <section class="fields" aria-label="Number fields">
+    <div class="field" data-base="bin">
+      <div class="field-head"><label for="in-bin"><span class="base-num">2</span><span class="base-name">Binary</span></label><span class="prefix">0b</span></div>
+      <div class="input-row"><input id="in-bin" inputmode="text" autocomplete="off" spellcheck="false" placeholder="0 and 1 only" aria-describedby="hint-bin"><button class="copy" type="button" data-copy="bin" aria-label="Copy binary value">Copy</button></div>
+      <p class="hint" id="hint-bin" aria-live="polite"></p>
+    </div>
+    <div class="field" data-base="oct">
+      <div class="field-head"><label for="in-oct"><span class="base-num">8</span><span class="base-name">Octal</span></label><span class="prefix">0o</span></div>
+      <div class="input-row"><input id="in-oct" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="digits 0 to 7" aria-describedby="hint-oct"><button class="copy" type="button" data-copy="oct" aria-label="Copy octal value">Copy</button></div>
+      <p class="hint" id="hint-oct" aria-live="polite"></p>
+    </div>
+    <div class="field" data-base="dec">
+      <div class="field-head"><label for="in-dec"><span class="base-num">10</span><span class="base-name">Decimal</span></label><span class="prefix">no prefix</span></div>
+      <div class="input-row"><input id="in-dec" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="digits 0 to 9" aria-describedby="hint-dec"><button class="copy" type="button" data-copy="dec" aria-label="Copy decimal value">Copy</button></div>
+      <p class="hint" id="hint-dec" aria-live="polite"></p>
+    </div>
+    <div class="field" data-base="hex">
+      <div class="field-head"><label for="in-hex"><span class="base-num">16</span><span class="base-name">Hexadecimal</span></label><span class="prefix">0x</span></div>
+      <div class="input-row"><input id="in-hex" inputmode="text" autocomplete="off" spellcheck="false" placeholder="0-9 and A-F" aria-describedby="hint-hex"><button class="copy" type="button" data-copy="hex" aria-label="Copy hexadecimal value">Copy</button></div>
+      <p class="hint" id="hint-hex" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <div class="samples" id="samples"><span>Try an example:</span></div>
+
+  <section class="panel" aria-labelledby="reg-title">
+    <div class="panel-head">
+      <div>
+        <h2 id="reg-title">Bit register</h2>
+        <p class="sub">Each lamp is one binary digit. Every group of four lamps is exactly one hex digit, shown underneath.</p>
+      </div>
+      <div class="seg" role="group" aria-label="Register width" id="widths"></div>
+    </div>
+    <div class="register" id="register"></div>
+    <div class="reg-meta" id="regmeta"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="sum-title">
+    <div>
+      <h2 id="sum-title">Place values</h2>
+      <p class="sub">Each lit bit adds a power of two. Add them up and you get the decimal value.</p>
+    </div>
+    <div class="chips" id="chips"></div>
+    <p class="sum" id="sum"></p>
+  </section>
+
+  <section class="panel" aria-labelledby="ref-title">
+    <div>
+      <h2 id="ref-title">Reference, 0 to 15</h2>
+      <p class="sub">The row for your number lights up when it falls in this range.</p>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Decimal</th><th>Binary</th><th>Octal</th><th>Hex</th></tr></thead>
+        <tbody id="reftable"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>Handles whole numbers of any size. Spaces, commas, underscores and the 0b, 0o and 0x prefixes are accepted when you type or paste.</footer>
+</div>
+
+<script>
+(function () {
+  var BASES = { bin: 2, oct: 8, dec: 10, hex: 16 };
+  var PREFIX = { bin: /^0b/i, oct: /^0o/i, dec: /^$/, hex: /^0x/i };
+  var VALID = { bin: /^[01]+$/, oct: /^[0-7]+$/, dec: /^[0-9]+$/, hex: /^[0-9a-f]+$/i };
+  var ALLOWED = { bin: "Binary only uses 0 and 1.", oct: "Octal only uses digits 0 to 7.", dec: "Decimal only uses digits 0 to 9.", hex: "Hex only uses 0 to 9 and A to F." };
+  var inputs = {}, hints = {}, fields = {};
+  Object.keys(BASES).forEach(function (k) {
+    inputs[k] = document.getElementById("in-" + k);
+    hints[k] = document.getElementById("hint-" + k);
+    fields[k] = inputs[k].closest(".field");
+  });
+
+  var value = 2026n;       // starts on a worked example
+  var width = 16;          // register width the person asked for
+
+  function clean(s, base) {
+    return s.trim().replace(/[\s_,]/g, "").replace(PREFIX[base], "");
+  }
+  function parse(s, base) {
+    if (base === 10) return BigInt(s);
+    return BigInt((base === 2 ? "0b" : base === 8 ? "0o" : "0x") + s);
+  }
+  function group(str, size) {
+    var out = [], i = str.length;
+    while (i > 0) { out.unshift(str.slice(Math.max(0, i - size), i)); i -= size; }
+    return out.join(" ");
+  }
+  function fmt(v, key) {
+    if (key === "bin") return group(v.toString(2), 4);
+    if (key === "oct") return v.toString(8);
+    if (key === "hex") return v.toString(16).toUpperCase();
+    var d = v.toString(10);
+    return d.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+  function bitLen(v) { return v === 0n ? 0 : v.toString(2).length; }
+
+  function writeFields(skip) {
+    Object.keys(BASES).forEach(function (k) {
+      if (k === skip) return;
+      inputs[k].value = value === null ? "" : fmt(value, k);
+      setBad(k, "");
+    });
+  }
+  function setBad(k, msg) {
+    fields[k].classList.toggle("bad", !!msg);
+    hints[k].textContent = msg || "";
+    inputs[k].setAttribute("aria-invalid", msg ? "true" : "false");
+  }
+
+  Object.keys(BASES).forEach(function (k) {
+    inputs[k].addEventListener("input", function () {
+      var raw = clean(inputs[k].value, BASES[k] === 10 ? 10 : BASES[k]);
+      if (BASES[k] === 10) raw = inputs[k].value.trim().replace(/[\s_,]/g, "");
+      if (raw === "") { value = null; setBad(k, ""); writeFields(k); render(); return; }
+      if (!VALID[k].test(raw)) { setBad(k, ALLOWED[k]); return; }
+      setBad(k, "");
+      value = parse(raw, BASES[k]);
+      writeFields(k);
+      render();
+    });
+  });
+
+  // Copy buttons
+  document.querySelectorAll(".copy").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var k = btn.getAttribute("data-copy");
+      var text = inputs[k].value.replace(/[\s,]/g, "");
+      if (!text) return;
+      function done() { var old = btn.textContent; btn.textContent = "Copied"; setTimeout(function () { btn.textContent = "Copy"; }, 1200); }
+      function fallback() { inputs[k].focus(); inputs[k].select(); }
+      try {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } catch (e) { fallback(); }
+    });
+  });
+
+  // Samples
+  var samples = [["255", 255n], ["1024", 1024n], ["2026", 2026n], ["65535", 65535n], ["0xDEADBEEF", 3735928559n]];
+  var sampleBox = document.getElementById("samples");
+  samples.forEach(function (s) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "sample"; b.textContent = s[0];
+    b.addEventListener("click", function () { value = s[1]; writeFields(null); render(); });
+    sampleBox.appendChild(b);
+  });
+
+  // Width selector
+  var widthBox = document.getElementById("widths");
+  [8, 16, 32, 64].forEach(function (w) {
+    var b = document.createElement("button");
+    b.type = "button"; b.textContent = w + " bit"; b.setAttribute("data-w", w);
+    b.addEventListener("click", function () { width = w; render(); });
+    widthBox.appendChild(b);
+  });
+
+  // Reference table
+  var tbody = document.getElementById("reftable");
+  for (var i = 0; i < 16; i++) {
+    var tr = document.createElement("tr");
+    tr.id = "ref-" + i;
+    tr.innerHTML = "<td>" + i + "</td><td>" + ("0000" + i.toString(2)).slice(-4) + "</td><td>" + i.toString(8) + "</td><td>" + i.toString(16).toUpperCase() + "</td>";
+    tbody.appendChild(tr);
+  }
+
+  var reg = document.getElementById("register");
+  var meta = document.getElementById("regmeta");
+  var chips = document.getElementById("chips");
+  var sumEl = document.getElementById("sum");
+
+  function effectiveWidth() {
+    var need = value === null ? 0 : bitLen(value);
+    var w = width;
+    while (w < need && w < 64) w *= 2;
+    return w;
+  }
+
+  function render() {
+    var v = value === null ? 0n : value;
+    var need = bitLen(v);
+
+    // reference table highlight
+    for (var r = 0; r < 16; r++) document.getElementById("ref-" + r).classList.toggle("hit", value !== null && v === BigInt(r));
+
+    // width control state
+    var eff = need > 64 ? width : effectiveWidth();
+    widthBox.querySelectorAll("button").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(Number(b.getAttribute("data-w")) === eff));
+    });
+
+    // register
+    reg.innerHTML = "";
+    meta.innerHTML = "";
+    if (need > 64) {
+      var p = document.createElement("p");
+      p.className = "note";
+      p.textContent = "This number needs " + need + " bits, which is wider than the 64-bit register. The four fields above still convert it exactly.";
+      reg.appendChild(p);
+    } else {
+      var bin = v.toString(2);
+      var padded = ("0".repeat(eff) + bin).slice(-eff);
+      for (var n = 0; n < eff / 4; n++) {
+        var nib = document.createElement("div");
+        nib.className = "nibble";
+        var bits = document.createElement("div");
+        bits.className = "bits";
+        var chunk = padded.slice(n * 4, n * 4 + 4);
+        for (var j = 0; j < 4; j++) {
+          var idx = eff - 1 - (n * 4 + j);
+          var on = chunk.charAt(j) === "1";
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "bit"; b.textContent = on ? "1" : "0";
+          b.setAttribute("aria-pressed", String(on));
+          b.setAttribute("aria-label", "Bit " + idx + " is " + (on ? "1" : "0") + ". Click to flip.");
+          b.setAttribute("data-i", idx);
+          bits.appendChild(b);
+        }
+        var hx = document.createElement("div");
+        hx.className = "nib-hex";
+        hx.textContent = parseInt(chunk, 2).toString(16).toUpperCase();
+        nib.appendChild(bits); nib.appendChild(hx);
+        reg.appendChild(nib);
+      }
+      var ones = bin.split("1").length - 1;
+      var ascii = (v >= 32n && v <= 126n) ? "'" + String.fromCharCode(Number(v)) + "'" : "none";
+      meta.innerHTML = "<span>Bits needed <b>" + need + "</b></span><span>Bits set <b>" + ones + "</b></span><span>Bytes <b>" + Math.max(1, Math.ceil(need / 8)) + "</b></span><span>ASCII <b></b></span>";
+      meta.lastChild.firstElementChild.textContent = ascii;
+    }
+
+    // place values
+    chips.innerHTML = "";
+    if (v === 0n) {
+      sumEl.innerHTML = "No bits are set, so the sum is <span class=\"eq\">0</span>.";
+    } else {
+      var s = v.toString(2), terms = [], total = 0n, shown = 0;
+      for (var k = 0; k < s.length; k++) {
+        if (s.charAt(k) === "1") {
+          var p2 = s.length - 1 - k;
+          var pv = 1n << BigInt(p2);
+          terms.push(pv.toString(10));
+          if (shown < 48) {
+            var c = document.createElement("span");
+            c.className = "chip";
+            c.innerHTML = "2<sup>" + p2 + "</sup> <i>=</i> " + pv.toString(10);
+            chips.appendChild(c); shown++;
+          }
+        }
+      }
+      if (terms.length > shown) {
+        var more = document.createElement("span");
+        more.className = "chip"; more.textContent = "+" + (terms.length - shown) + " more";
+        chips.appendChild(more);
+      }
+      var line = terms.length > 12 ? terms.slice(0, 6).join(" + ") + " + … + " + terms.slice(-3).join(" + ") : terms.join(" + ");
+      sumEl.innerHTML = "";
+      sumEl.appendChild(document.createTextNode(line + " = "));
+      var eq = document.createElement("span"); eq.className = "eq"; eq.textContent = v.toString(10);
+      sumEl.appendChild(eq);
+    }
+  }
+
+  // Flip bits by delegation
+  reg.addEventListener("click", function (e) {
+    var t = e.target.closest(".bit");
+    if (!t) return;
+    var i = BigInt(t.getAttribute("data-i"));
+    var v = value === null ? 0n : value;
+    value = v ^ (1n << i);
+    writeFields(null);
+    render();
+  });
+
+  writeFields(null);
+  render();
+})();
+</script>
+</body>
+</html>
