@@ -1,0 +1,634 @@
+{
+  "categories": {
+    "Python Programming": [
+      {
+        "id": 1,
+        "question": "What is the correct file extension for Python files?",
+        "options": [
+          ".pt",
+          ".py",
+          ".pyt",
+          ".python"
+        ],
+        "answer": ".py",
+        "explanation": ".py is the standard file extension used for Python scripts."
+      },
+      {
+        "id": 2,
+        "question": "Which keyword is used to define a function in Python?",
+        "options": [
+          "func",
+          "define",
+          "def",
+          "function"
+        ],
+        "answer": "def",
+        "explanation": "In Python, the 'def' keyword is used to declare a user-defined function."
+      },
+      {
+        "id": 3,
+        "question": "Which of the following data types is immutable in Python?",
+        "options": [
+          "List",
+          "Dictionary",
+          "Set",
+          "Tuple"
+        ],
+        "answer": "Tuple",
+        "explanation": "Tuples cannot be modified after creation, making them immutable."
+      },
+      {
+        "id": 4,
+        "question": "What is the output of 3 * 'ab' in Python?",
+        "options": [
+          "ababab",
+          "3ab",
+          "SyntaxError",
+          "ab3"
+        ],
+        "answer": "ababab",
+        "explanation": "Multiplying a string by an integer repeats the string that many times."
+      },
+      {
+        "id": 5,
+        "question": "Which built-in function returns the number of items in an object?",
+        "options": [
+          "count()",
+          "size()",
+          "len()",
+          "length()"
+        ],
+        "answer": "len()",
+        "explanation": "The len() function returns the total count of elements in a sequence."
+      },
+      {
+        "id": 6,
+        "question": "How are single-line comments created in Python?",
+        "options": [
+          "// comment",
+          "/* comment */",
+          "# comment",
+          "-- comment"
+        ],
+        "answer": "# comment",
+        "explanation": "A hash symbol (#) is used to denote single-line comments in Python."
+      },
+      {
+        "id": 7,
+        "question": "Which collection type stores key-value pairs in Python?",
+        "options": [
+          "List",
+          "Dictionary",
+          "Tuple",
+          "Array"
+        ],
+        "answer": "Dictionary",
+        "explanation": "Dictionaries store data in key:value mappings enclosed in curly braces {}."
+      },
+      {
+        "id": 8,
+        "question": "What keyword is used to handle exceptions in a try block?",
+        "options": [
+          "catch",
+          "except",
+          "error",
+          "handle"
+        ],
+        "answer": "except",
+        "explanation": "Python uses try-except blocks instead of try-catch blocks for error handling."
+      },
+      {
+        "id": 9,
+        "question": "Which operator is used for exponentiation (power) in Python?",
+        "options": [
+          "^",
+          "**",
+          "^^",
+          "exp()"
+        ],
+        "answer": "**",
+        "explanation": "Double asterisks (**) represent exponentiation in Python (e.g., 2**3 = 8)."
+      },
+      {
+        "id": 10,
+        "question": "What will bool([]) evaluate to in Python?",
+        "options": [
+          "True",
+          "False",
+          "None",
+          "Error"
+        ],
+        "answer": "False",
+        "explanation": "An empty list, string, or dictionary evaluates to False (falsy) in Python."
+      },
+      {
+        "id": 11,
+        "question": "What is the output of print(type(5)) in Python?",
+        "options": [
+          "<class 'int'>",
+          "<class 'float'>",
+          "<class 'str'>",
+          "<class 'number'>"
+        ],
+        "answer": "<class 'int'>",
+        "explanation": "In Python, whole numbers are represented by the int class, so type(5) evaluates to <class 'int'>."
+      },
+      {
+        "id": 12,
+        "question": "What data type is the result of: 3 / 2 in Python 3?",
+        "options": [
+          "int",
+          "float",
+          "string",
+          "complex"
+        ],
+        "answer": "float",
+        "explanation": "The single slash (/) operator in Python 3 always performs float division, returning 1.5."
+      },
+      {
+        "id": 13,
+        "question": "Which of the following is a mutable data type in Python?",
+        "options": [
+          "tuple",
+          "string",
+          "list",
+          "frozenset"
+        ],
+        "answer": "list",
+        "explanation": "Lists are mutable sequences whose elements can be modified, added, or removed after creation."
+      },
+      {
+        "id": 14,
+        "question": "What does the 'len()' function do?",
+        "options": [
+          "Returns the last element of a sequence",
+          "Returns the number of items in an object",
+          "Converts an object to a list",
+          "Returns the data type of an object"
+        ],
+        "answer": "Returns the number of items in an object",
+        "explanation": "The built-in len() function returns the total number of items in a string, list, dictionary, or tuple."
+      },
+      {
+        "id": 15,
+        "question": "Which operator is used for exponentiation in Python?",
+        "options": [
+          "^",
+          "**",
+          "//",
+          "%%"
+        ],
+        "answer": "**",
+        "explanation": ""
+      },
+      {
+        "id": 16,
+        "question": "What is the correct way to create a dictionary in Python?",
+        "options": [
+          "d = [1, 2, 3]",
+          "d = (1, 2, 3)",
+          "d = {'a': 1, 'b': 2}",
+          "d = <'a': 1>"
+        ],
+        "answer": "d = {'a': 1, 'b': 2}",
+        "explanation": "Dictionaries are declared using curly braces with key: value pairs separated by commas."
+      },
+      {
+        "id": 17,
+        "question": "Which method is used to add an element to the end of a list?",
+        "options": [
+          "add()",
+          "insert()",
+          "append()",
+          "push()"
+        ],
+        "answer": "append()",
+        "explanation": "The append() method adds a single element to the very end of an existing list in-place."
+      }
+    ],
+    "Computer Fundamentals": [
+      {
+        "id": 1,
+        "question": "What does CPU stand for?",
+        "options": [
+          "Central Process Unit",
+          "Central Processing Unit",
+          "Computer Processing Utility",
+          "Central Processor Universal"
+        ],
+        "answer": "Central Processing Unit",
+        "explanation": "The CPU is the primary component that executes computer instructions."
+      },
+      {
+        "id": 2,
+        "question": "Which type of memory is volatile and loses data when power is turned off?",
+        "options": [
+          "ROM",
+          "Hard Disk",
+          "RAM",
+          "Flash Drive"
+        ],
+        "answer": "RAM",
+        "explanation": "RAM (Random Access Memory) requires power to retain information."
+      },
+      {
+        "id": 3,
+        "question": "How many bits make up one byte?",
+        "options": [
+          "4 bits",
+          "8 bits",
+          "16 bits",
+          "32 bits"
+        ],
+        "answer": "8 bits",
+        "explanation": "Standard computing architecture defines 1 byte as equal to 8 bits."
+      },
+      {
+        "id": 4,
+        "question": "Which component is considered the brain of the computer?",
+        "options": [
+          "Hard Disk",
+          "RAM",
+          "CPU",
+          "Motherboard"
+        ],
+        "answer": "CPU",
+        "explanation": "The CPU performs all calculations and controls other hardware components."
+      },
+      {
+        "id": 5,
+        "question": "Which of the following is an example of System Software?",
+        "options": [
+          "MS Word",
+          "Operating System",
+          "Photoshop",
+          "Google Chrome"
+        ],
+        "answer": "Operating System",
+        "explanation": "Operating systems like Windows, Linux, and macOS manage computer hardware."
+      },
+      {
+        "id": 6,
+        "question": "What does HTTP stand for in networking?",
+        "options": [
+          "HyperText Transfer Protocol",
+          "HyperText Transmission Program",
+          "Hyperlink Text Transfer Protocol",
+          "Hyper Terminal Test Protocol"
+        ],
+        "answer": "HyperText Transfer Protocol",
+        "explanation": "HTTP is the foundation protocol used for data communication on the World Wide Web."
+      },
+      {
+        "id": 7,
+        "question": "Which number system uses only digits 0 and 1?",
+        "options": [
+          "Octal",
+          "Hexadecimal",
+          "Decimal",
+          "Binary"
+        ],
+        "answer": "Binary",
+        "explanation": "The binary system is a base-2 system that digital computers use natively."
+      },
+      {
+        "id": 8,
+        "question": "What is the primary function of an Input Device?",
+        "options": [
+          "To display data to the user",
+          "To feed data and instructions into the computer",
+          "To perform mathematical calculations",
+          "To store data permanently"
+        ],
+        "answer": "To feed data and instructions into the computer",
+        "explanation": "Input devices like keyboards and mice transmit data into the computer system."
+      },
+      {
+        "id": 9,
+        "question": "Which port is commonly used to connect peripherals such as keyboards and mice?",
+        "options": [
+          "VGA",
+          "HDMI",
+          "USB",
+          "Ethernet"
+        ],
+        "answer": "USB",
+        "explanation": "USB (Universal Serial Bus) is the standard connection interface for peripherals."
+      },
+      {
+        "id": 10,
+        "question": "What does BIOS stand for?",
+        "options": [
+          "Basic Input Output System",
+          "Binary Integrated Operating System",
+          "Built-in Operation System",
+          "Basic Interface Output Software"
+        ],
+        "answer": "Basic Input Output System",
+        "explanation": "BIOS initializes hardware during the booting process."
+      },
+      {
+        "id": 11,
+        "question": "Which of the following is NOT a programming paradigm?",
+        "options": [
+          "Object-Oriented",
+          "Functional",
+          "Procedural",
+          "Compilation"
+        ],
+        "answer": "Compilation",
+        "explanation": "Compilation is a translation process by a compiler, whereas OOP, Functional, and Procedural are programming paradigms."
+      },
+      {
+        "id": 12,
+        "question": "What is the binary representation of the decimal number 10?",
+        "options": [
+          "1010",
+          "1100",
+          "1001",
+          "1110"
+        ],
+        "answer": "1010",
+        "explanation": "Decimal 10 in binary is 8 + 2 = 1010 in base-2."
+      },
+      {
+        "id": 13,
+        "question": "Which data structure follows the LIFO (Last In, First Out) principle?",
+        "options": [
+          "Queue",
+          "Stack",
+          "Linked List",
+          "Array"
+        ],
+        "answer": "Stack",
+        "explanation": "A Stack allows insertion and deletion only at the top, following the Last-In First-Out (LIFO) order."
+      },
+      {
+        "id": 14,
+        "question": "What is the time complexity of binary search?",
+        "options": [
+          "O(n)",
+          "O(n^2)",
+          "O(log n)",
+          "O(1)"
+        ],
+        "answer": "O(log n)",
+        "explanation": "Binary search repeatedly halves the search space, giving an efficient O(log n) logarithmic time complexity."
+      },
+      {
+        "id": 15,
+        "question": "Which protocol is used for secure communication over the internet?",
+        "options": [
+          "HTTP",
+          "FTP",
+          "HTTPS",
+          "SMTP"
+        ],
+        "answer": "HTTPS",
+        "explanation": "HTTPS encrypts web traffic using SSL/TLS to ensure confidentiality and integrity."
+      },
+      {
+        "id": 16,
+        "question": "What does RAM stand for?",
+        "options": [
+          "Read Access Memory",
+          "Random Access Memory",
+          "Rapid Access Module",
+          "Run Active Memory"
+        ],
+        "answer": "Random Access Memory",
+        "explanation": "RAM stands for Random Access Memory, the computer's high-speed volatile working memory."
+      },
+      {
+        "id": 17,
+        "question": "In Big-O notation, what does O(1) represent?",
+        "options": [
+          "Linear time",
+          "Constant time",
+          "Quadratic time",
+          "Logarithmic time"
+        ],
+        "answer": "Constant time",
+        "explanation": "O(1) signifies constant time complexity, meaning execution time does not depend on input size."
+      }
+    ],
+    "General Knowledge": [
+      {
+        "id": 1,
+        "question": "Who is known as the father of modern computers?",
+        "options": [
+          "Alan Turing",
+          "Charles Babbage",
+          "Bill Gates",
+          "Ada Lovelace"
+        ],
+        "answer": "Charles Babbage",
+        "explanation": "Charles Babbage conceptualized and invented the first mechanical computer."
+      },
+      {
+        "id": 2,
+        "question": "In which country was the Python programming language created?",
+        "options": [
+          "United States",
+          "Netherlands",
+          "United Kingdom",
+          "Germany"
+        ],
+        "answer": "Netherlands",
+        "explanation": "Guido van Rossum created Python at CWI in the Netherlands."
+      },
+      {
+        "id": 3,
+        "question": "What is the world's most widely used desktop operating system?",
+        "options": [
+          "macOS",
+          "Linux",
+          "Microsoft Windows",
+          "ChromeOS"
+        ],
+        "answer": "Microsoft Windows",
+        "explanation": "Microsoft Windows holds the highest desktop OS market share globally."
+      },
+      {
+        "id": 4,
+        "question": "Who wrote the first computer algorithm, making her the first programmer?",
+        "options": [
+          "Grace Hopper",
+          "Ada Lovelace",
+          "Margaret Hamilton",
+          "Joan Clarke"
+        ],
+        "answer": "Ada Lovelace",
+        "explanation": "Ada Lovelace wrote an algorithm for Babbage's Analytical Engine in 1843."
+      },
+      {
+        "id": 5,
+        "question": "Which company originally developed the Java programming language?",
+        "options": [
+          "Microsoft",
+          "Sun Microsystems",
+          "IBM",
+          "Apple"
+        ],
+        "answer": "Sun Microsystems",
+        "explanation": "Java was developed by James Gosling at Sun Microsystems (later acquired by Oracle)."
+      },
+      {
+        "id": 6,
+        "question": "What does AI stand for in modern technology?",
+        "options": [
+          "Automated Interface",
+          "Artificial Intelligence",
+          "Applied Informatics",
+          "Algorithmic Integration"
+        ],
+        "answer": "Artificial Intelligence",
+        "explanation": "Artificial Intelligence refers to computer systems capable of performing human-like tasks."
+      },
+      {
+        "id": 7,
+        "question": "Which organization manages and oversees the standardisation of the Python language?",
+        "options": [
+          "Python Software Foundation (PSF)",
+          "W3C",
+          "IEEE",
+          "Apache Software Foundation"
+        ],
+        "answer": "Python Software Foundation (PSF)",
+        "explanation": "The PSF is a non-profit dedicated to the Python language and ecosystem."
+      },
+      {
+        "id": 8,
+        "question": "What does URL stand for in web technology?",
+        "options": [
+          "Universal Resource Locator",
+          "Uniform Resource Locator",
+          "United Resource Link",
+          "Unified Routing Link"
+        ],
+        "answer": "Uniform Resource Locator",
+        "explanation": "A URL specifies the address of a given unique resource on the Web."
+      },
+      {
+        "id": 9,
+        "question": "Which programming language is named after a British comedy television series?",
+        "options": [
+          "Ruby",
+          "Python",
+          "Perl",
+          "Pascal"
+        ],
+        "answer": "Python",
+        "explanation": "Guido van Rossum named Python after BBC's 'Monty Python's Flying Circus'."
+      },
+      {
+        "id": 10,
+        "question": "What year was the Python programming language first released?",
+        "options": [
+          "1989",
+          "1991",
+          "1995",
+          "2000"
+        ],
+        "answer": "1991",
+        "explanation": "Python was first released by Guido van Rossum in February 1991."
+      },
+      {
+        "id": 11,
+        "question": "What is the capital of France?",
+        "options": [
+          "Berlin",
+          "Madrid",
+          "Paris",
+          "Rome"
+        ],
+        "answer": "Paris",
+        "explanation": "Paris is the capital and largest city of France."
+      },
+      {
+        "id": 12,
+        "question": "Which planet is known as the Red Planet?",
+        "options": [
+          "Venus",
+          "Mars",
+          "Jupiter",
+          "Saturn"
+        ],
+        "answer": "Mars",
+        "explanation": "Mars is known as the Red Planet due to the reddish iron oxide on its surface."
+      },
+      {
+        "id": 13,
+        "question": "Who wrote the play 'Romeo and Juliet'?",
+        "options": [
+          "Charles Dickens",
+          "William Shakespeare",
+          "Jane Austen",
+          "Mark Twain"
+        ],
+        "answer": "William Shakespeare",
+        "explanation": "William Shakespeare wrote the tragic play Romeo and Juliet in the late 16th century."
+      },
+      {
+        "id": 14,
+        "question": "What is the largest ocean on Earth?",
+        "options": [
+          "Atlantic Ocean",
+          "Indian Ocean",
+          "Arctic Ocean",
+          "Pacific Ocean"
+        ],
+        "answer": "Pacific Ocean",
+        "explanation": "The Pacific Ocean is the largest and deepest ocean basin on Earth."
+      },
+      {
+        "id": 15,
+        "question": "How many continents are there on Earth?",
+        "options": [
+          "5",
+          "6",
+          "7",
+          "8"
+        ],
+        "answer": "7",
+        "explanation": "There are 7 continents: Asia, Africa, North America, South America, Antarctica, Europe, and Australia."
+      },
+      {
+        "id": 16,
+        "question": "What is the chemical symbol for water?",
+        "options": [
+          "WO",
+          "H2O",
+          "HO2",
+          "OH2"
+        ],
+        "answer": "H2O",
+        "explanation": "Water is composed of two hydrogen atoms and one oxygen atom, hence H2O."
+      },
+      {
+        "id": 17,
+        "question": "Which country is known as the Land of the Rising Sun?",
+        "options": [
+          "China",
+          "Japan",
+          "South Korea",
+          "Thailand"
+        ],
+        "answer": "Japan",
+        "explanation": "Japan is known as the Land of the Rising Sun (from the Japanese name Nihon/Nippon)."
+      },
+      {
+        "id": 18,
+        "question": "Who painted the Mona Lisa?",
+        "options": [
+          "Vincent van Gogh",
+          "Pablo Picasso",
+          "Leonardo da Vinci",
+          "Michelangelo"
+        ],
+        "answer": "Leonardo da Vinci",
+        "explanation": "The Mona Lisa was painted by the Italian Renaissance master Leonardo da Vinci."
+      }
+    ]
+  }
+}
