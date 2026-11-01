@@ -1,2 +1,0 @@
-
-    command=show_charts,
